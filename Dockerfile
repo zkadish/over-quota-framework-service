@@ -1,9 +1,10 @@
 # TODO: switch to ubuntu@20.0.4?
 FROM debian:10.5
 
-WORKDIR /app
+WORKDIR /SKILL-UP-SERVER
 
-COPY app/server.js /app
+COPY package.json ./
+COPY package-lock.json ./
 COPY nginx/default.conf /etc/nginx/conf.d/
 
 RUN apt-get update \
@@ -17,6 +18,8 @@ RUN apt-get update \
     && rm -rf /var/lib/app/lists/* /tmp/* /var/tmp/*
     # && echo "daemon off:" >> /etc/nginx/nginx-conf
 
-EXPOSE 80
+RUN npm ci
 
-CMD ["nginx", "node server.js"]
+EXPOSE 8080
+
+CMD ["service nginx start", "npm start"]

@@ -1,0 +1,28 @@
+version: "3.2"
+services:
+ # setup the MongoDB database
+  mongo-database:
+   # pulls the latest, stable image
+    # image: mongo:4.4.2 # TODO: pin version to 4.4.2
+    build:
+       context: .
+       dockerfile: Dockerfile
+    container_name: "mongo"
+    restart: always
+
+    # configure the Docker entrypoint for MongoDB
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=1234
+
+    # bind mount volume for MongoDB documents
+    volumes:
+      - $PWD/mongo-data:/data/db
+      # - $PWD/build:/build
+
+    ports:
+      - "27017:27017" # server db connection
+      # - "28017:28017" # html connection
+
+    # command: sh ./build/start-mongo.sh
+    # command: pwd
