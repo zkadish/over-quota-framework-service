@@ -8,7 +8,7 @@ COPY package-lock.json ./
 COPY nginx/default.conf /etc/nginx/conf.d/
 
 RUN apt-get update \
-    && apt-get install -y nano \
+    && apt-get install -y nano apt-utils \
     && apt-get install -y nginx \
     && apt-get install -y curl \
     # && apt-get install -y npm \
