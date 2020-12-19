@@ -1,5 +1,5 @@
 var express = require('express');
-const initMongo = require('./mongodb/connection.js');
+// const mongodb = require('./mongodb/connection.js');
 var createError = require('http-errors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -11,7 +11,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 // initialize mongo
-initMongo();
+// var db = mongodb;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
