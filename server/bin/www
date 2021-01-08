@@ -7,7 +7,12 @@
 var app = require('../server');
 var debug = require('debug')('app:server');
 var http = require('http');
+
+/**
+ * initialize mongodb
+ */
 const mongodb = require('../mongodb/connection.js');
+
 /**
  * Get port from environment and store in Express.
  */
