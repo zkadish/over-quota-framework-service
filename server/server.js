@@ -2,6 +2,7 @@ var express = require('express');
 // const mongodb = require('./mongodb/connection.js');
 var createError = require('http-errors');
 var path = require('path');
+const compression = require("compression")
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
@@ -9,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.disable('x-powered-by');
 
 // initialize mongo
 // var db = mongodb;
@@ -26,7 +28,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // add static assets
+app.use(compression())
 app.use(express.static(path.join(__dirname, 'public')));
+
+// remove the trialing slash from incoming routes
+app.use((req, res, next) => {
+	if (req.path.substr(-1) == '/' && req.path.length > 1) {
+		const query = req.url.slice(req.path.length)
+		res.redirect(301, req.path.slice(0, -1) + query)
+	} else {
+		next()
+	}
+});
 
 // add api routs
 // app.use('/', indexRouter);
