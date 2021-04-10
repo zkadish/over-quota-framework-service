@@ -1,4 +1,4 @@
-# SkillUp Application Server: Nginx Reverse Proxy Node Server
+# SkillUp Framework Service Server: Nginx Reverse Proxy Node Server
 
 The SkillUp App Server contains CRUD micro service api for Frameworks which define the Sales Coach work flows.
 
