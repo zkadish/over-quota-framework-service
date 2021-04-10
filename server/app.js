@@ -1,19 +1,23 @@
-var express = require('express');
-// const mongodb = require('./mongodb/connection.js');
-var createError = require('http-errors');
 var path = require('path');
+require('dotenv').config();
+var express = require('express');
+const { initMongo } = require('./config/mongo/db');
+
+var createError = require('http-errors');
 const compression = require("compression")
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var templatesRouter = require('./routes/templates');
+var blocksRouter = require('./routes/blocks');
+var elementsRouter = require('./routes/elements');
+var battleCardsRouter = require('./routes/battleCards');
+var talkTracksRouter = require('./routes/talkTracks');
 
+const db = initMongo();
 var app = express();
 app.disable('x-powered-by');
-
-// initialize mongo
-// var db = mongodb;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,17 +46,20 @@ app.use((req, res, next) => {
 });
 
 // add api routs
-// app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// let react-router handle all non api routes
-app.use('/*', indexRouter);
+app.use('/api/v1/frameworks', templatesRouter);
+app.use('/api/v1/frameworks', blocksRouter);
+app.use('/api/v1/frameworks', elementsRouter);
+app.use('/api/v1/frameworks', battleCardsRouter);
+app.use('/api/v1/frameworks', talkTracksRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   // res.status(err.status || 500);
   next(createError(404));
 });
+
+// let react-router handle all non api routes
+app.use('/*', indexRouter);
 
 // error handler
 app.use(function(err, req, res, next) {

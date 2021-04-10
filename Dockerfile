@@ -1,11 +1,13 @@
-# TODO: switch to ubuntu@20.0.4?
-FROM debian:10.5
+FROM ubuntu:20.04
 
 WORKDIR /SKILL-UP-SERVER
 
 COPY package.json ./
 COPY package-lock.json ./
-COPY nginx/default.conf /etc/nginx/conf.d/
+COPY .env ./
+COPY server/ ./server
+COPY server/config/nginx/default.conf /etc/nginx/conf.d/
+COPY server/config/nginx/startup-script.sh ./
 
 RUN apt-get update \
     && apt-get install -y nano apt-utils \
@@ -19,7 +21,9 @@ RUN apt-get update \
     # && echo "daemon off:" >> /etc/nginx/nginx-conf
 
 RUN npm ci
+# RUN service nginx start
+# RUN npm start
 
-EXPOSE 8080
+# EXPOSE 8080
 
-CMD ["service nginx start", "npm start"]
+# CMD ["service nginx start", "npm start"]
