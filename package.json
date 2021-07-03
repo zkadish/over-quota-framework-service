@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./server/bin/www",
+    "debug": "nodemon --inspect=0.0.0.0 ./server/bin/www",
     "start": "node ./server/bin/www"
   },
   "dependencies": {

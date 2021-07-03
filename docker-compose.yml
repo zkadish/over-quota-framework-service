@@ -14,6 +14,7 @@ services:
       - $PWD/server:/SKILL-UP-SERVER/server
     ports:
       - 8080:80
+      - 9229:9229
     restart: unless-stopped
 
 volumes:

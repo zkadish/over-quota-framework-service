@@ -3,4 +3,6 @@
 echo "STARTUP SCRIPT..."
 service nginx start
 # npm start
-npm run dev
+node -v
+# npm run dev
+npm run debug

@@ -44,7 +44,7 @@ router.get('/talk-tracks', async (req, res, next) => {
   console.log('/talk-tracks')
   try {
     const talkTracks = await TalkTrack.find();
-    console.log(talkTracks);
+    // console.log(talkTracks);
     res.status(200).json({ talkTracks });
   } catch (error) {
     console.log(error);

@@ -43,7 +43,7 @@ router.get('/elements', async (req, res, next) => {
   console.log('/elements')
   try {
     const elements = await Element.find();
-    console.log(elements);
+    // console.log(elements);
     res.status(200).json({ elements });
   } catch (error) {
     console.log(error);

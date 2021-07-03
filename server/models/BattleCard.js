@@ -19,7 +19,7 @@ const battleCardSchema = new Schema({
     default: '',
     required: true
   },
-  talkTracks: {
+  'talk-tracks': {
     type: Array,
     default: [],
     required: true

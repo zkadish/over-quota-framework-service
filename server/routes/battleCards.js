@@ -43,7 +43,7 @@ router.get('/battle-cards', async (req, res, next) => {
   console.log('/battle-cards')
   try {
     const battleCards = await BattleCard.find();
-    console.log(battleCards);
+    // console.log(battleCards);
     res.status(200).json({ battleCards });
   } catch (error) {
     console.log(error);

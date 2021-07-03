@@ -43,7 +43,7 @@ router.get('/blocks', async (req, res, next) => {
   console.log('/blocks')
   try {
     const blocks = await Block.find();
-    console.log(blocks);
+    // console.log(blocks);
     res.status(200).json({ blocks });
   } catch (error) {
     console.log(error);
