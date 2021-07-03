@@ -4,7 +4,7 @@ The SkillUp App Server contains CRUD micro service api for Frameworks which defi
 
 ## Development getting started
 
-- $ nvm use 12.20.0
+- $ nvm use node@>=12.20.0
 
 ### Create the docker network
 

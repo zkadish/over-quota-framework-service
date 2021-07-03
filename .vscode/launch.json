@@ -13,7 +13,7 @@
       "type": "node",
       "request": "attach",
       "name": "Docker: Attach to Node",
-      "remoteRoot": "SKILL-UP-SERVER/server",
+      "remoteRoot": "/SKILL-UP-SERVER/server",
       "localRoot": "${workspaceFolder}/server"
     }
     // {
