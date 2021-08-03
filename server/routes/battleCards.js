@@ -42,12 +42,40 @@ router.post(
 router.get('/battle-cards', async (req, res, next) => {
   console.log('/battle-cards')
   try {
-    const battleCards = await BattleCard.find();
-    console.log(battleCards);
+    const battleCards = await BattleCard.find({ account_id: req.headers['user-account-id'] });
+    // console.log(battleCards);
     res.status(200).json({ battleCards });
   } catch (error) {
     console.log(error);
   }
 });
+
+/**
+ * POST insert multiple battle cards
+ * used for provisioning the user account
+ */
+ router.post(
+  '/battle-cards',
+  body('battleCards').isArray({ min: 1 }),
+  async (req, res) => {
+    console.log(req.body);
+    try {
+      const errors = await validationResult(req);
+      if (!errors.isEmpty()) throw errors;
+
+      const { battleCards } = req.body;
+      const newBattleCards = await BattleCard.insertMany(battleCards);
+
+      res.status(200).json(newBattleCards);
+    } catch (error) {
+      console.log(error);
+      if (typeof error === 'string') {
+        return res.status(400).json({ error });
+      }
+
+      return res.status(400).json({ errors: error.array() });
+    }
+  }
+);
 
 module.exports = router;

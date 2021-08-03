@@ -11,9 +11,21 @@ const templateSchema = new Schema({
   label: {
     type: String,
     default: '',
-    unique: true,
     required: true
   },
+  blocks: {
+    type: Array,
+    default: [],
+  },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Template', templateSchema);

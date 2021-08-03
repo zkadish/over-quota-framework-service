@@ -43,12 +43,41 @@ router.post(
 router.get('/talk-tracks', async (req, res, next) => {
   console.log('/talk-tracks')
   try {
-    const talkTracks = await TalkTrack.find();
-    console.log(talkTracks);
+    const talkTracks = await TalkTrack.find({ account_id: req.headers['user-account-id'] });
+    // TODO: sanitize remove mongo _id
+
     res.status(200).json({ talkTracks });
   } catch (error) {
     console.log(error);
   }
 });
+
+/**
+ * POST insert multiple talk tracks
+ * used for provisioning the user account
+ */
+ router.post(
+  '/talk-tracks',
+  body('talkTracks').isArray({ min: 1 }),
+  async (req, res) => {
+    console.log(req.body);
+    try {
+      const errors = await validationResult(req);
+      if (!errors.isEmpty()) throw errors;
+
+      const { talkTracks } = req.body;
+      const newTalkTracks = await TalkTrack.insertMany(talkTracks);
+
+      res.status(200).json(newTalkTracks);
+    } catch (error) {
+      console.log(error);
+      if (typeof error === 'string') {
+        return res.status(400).json({ error });
+      }
+
+      return res.status(400).json({ errors: error.array() });
+    }
+  }
+);
 
 module.exports = router;

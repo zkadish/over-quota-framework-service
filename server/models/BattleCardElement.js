@@ -1,11 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const battleCardSchema = new Schema({
+// NOTE: remove this is not need and not a good path to go down...
+// all elements should have a corresponding library 
+const battleCardElementSchema = new Schema({
   id: {
     type: String,
     default: '',
     unique: true,
+    required: true
+  },
+  container_id: {
+    type: String,
+    default: '',
     required: true
   },
   label: {
@@ -13,20 +20,15 @@ const battleCardSchema = new Schema({
     default: '',
     required: true
   },
+  value: {},
   type: {
     type: String,
     default: '',
     required: true
   },
-  'talk-tracks': {
-    type: Array,
-    default: [],
-    required: true
-  },
   corporate_id: {
     type: String,
     default: '',
-    // required: true
   },
   account_id: {
     type: String,
@@ -35,4 +37,4 @@ const battleCardSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('BattleCard', battleCardSchema);
+module.exports = mongoose.model('BattleCardElement', battleCardElementSchema);

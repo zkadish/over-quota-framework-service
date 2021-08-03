@@ -11,13 +11,11 @@ const talkTrackSchema = new Schema({
   label: {
     type: String,
     default: '',
-    unique: true,
     required: true
   },
   value: {
     type: String,
     default: '',
-    unique: true,
     required: true
   },
   type: {
@@ -25,9 +23,19 @@ const talkTrackSchema = new Schema({
     default: '',
     required: true
   },
-  containers: {
-    type: Array,
-    default: [],
+  // containers: {
+  //   type: Array,
+  //   default: [],
+  //   required: true
+  // },
+  corporate_id: {
+    type: String,
+    default: '',
+    // required: true
+  },
+  account_id: {
+    type: String,
+    default: '',
     required: true
   }
 });

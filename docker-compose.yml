@@ -8,18 +8,23 @@ services:
     # command: service nginx start
     # command: ls -laF
     command: ./startup-script.sh
-    # networks:
-    #   - skillup-network
+    networks:
+      - skillup-network
     volumes:
       - $PWD/server:/SKILL-UP-SERVER/server
     ports:
-      - 8080:80
+      - 9999:90 # express and exposed docker port are the same
+      - 9229:9229 # this is the debug port
     restart: unless-stopped
 
 volumes:
   server:
 
 networks:
-  default:
-    external:
-      name: skillup-network
+  skillup-network:
+    external: true
+
+# networks:
+#   default:
+#     external: true
+#     name: skillup-network

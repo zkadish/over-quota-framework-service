@@ -1,0 +1,60 @@
+{
+  "configurations": [
+  {
+    "name": "Attach to Node",
+    "type": "node",
+    "request": "attach",
+    "port": 9230
+  },
+    // {
+    //   "type": "node",
+    //   "request": "attach",
+    //   "name": "Docker: Attach to Node",
+    //   "port": 9229,
+    //   "address": "localhost",
+    //   "localRoot": "./server",
+    //   "remoteRoot": "/SKILL-UP-SERVER/server",
+    // },
+    {
+      "name": "Docker: Attach to Node",
+      "type": "node",
+      "request": "attach",
+      "remoteRoot": "/SKILL-UP-SERVER/server",
+      "localRoot": "${workspaceFolder}/server"
+    }
+    // {
+    //   "name": "Docker Node.js Launch",
+    //   "type": "docker",
+    //   "request": "launch",
+    //   "preLaunchTask": "docker-run: debug",
+    //   "platform": "node"
+    // }
+    // {
+    //   "name": "Docker: Attach to Node",
+    //   "type": "node",
+    //   "request": "attach",
+    //   "port": 9229,
+    //   "address": "localhost",
+    //   "localRoot": "${workspaceFolder}/server",
+    //   "remoteRoot": "/SKILL-UP-SERVER/server",
+    //   "protocol": "inspector"
+    // }
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Launch Program", 
+    //   "skipFiles": [
+    //       "<node_internals>/**"
+    //   ],
+    //   "program": "${workspaceFolder}/server/bin/www"
+    // }
+    // {
+    //   "type": "node",
+    //   "request": "attach",
+    //   "name": "Node: Nodemon",
+    //   "processId": "${command:PickProcess}",
+    //   "restart": true,
+    //   "protocol": "inspector",
+    // },
+  ]
+}
