@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./server/bin/www",
-    "debug": "nodemon --inspect=0.0.0.0 ./server/bin/www",
+    "debug": "nodemon --inspect=9230 --inspect-brk=9230 ./server/bin/www",
+    "debug:docker": "nodemon --inspect=0.0.0.0 ./server/bin/www",
     "start": "node ./server/bin/www"
   },
   "dependencies": {
@@ -17,7 +18,8 @@
     "express-validator": "^6.10.0",
     "http-errors": "~1.6.3",
     "mongoose": "^5.11.3",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

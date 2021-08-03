@@ -13,22 +13,26 @@ const elementSchema = new Schema({
     default: '',
     required: true
   },
-  library_id: {
-    type: String,
-    default: '',
-  },
   label: {
     type: String,
     default: '',
-    unique: true,
     required: true
   },
+  value: {},
   type: {
     type: String,
     default: '',
     required: true
   },
-  value: {}
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Element', elementSchema);

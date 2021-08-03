@@ -1,5 +1,11 @@
 {
   "configurations": [
+  {
+    "name": "Attach to Node",
+    "type": "node",
+    "request": "attach",
+    "port": 9230
+  },
     // {
     //   "type": "node",
     //   "request": "attach",
@@ -10,9 +16,9 @@
     //   "remoteRoot": "/SKILL-UP-SERVER/server",
     // },
     {
+      "name": "Docker: Attach to Node",
       "type": "node",
       "request": "attach",
-      "name": "Docker: Attach to Node",
       "remoteRoot": "/SKILL-UP-SERVER/server",
       "localRoot": "${workspaceFolder}/server"
     }

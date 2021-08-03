@@ -10,6 +10,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var templatesRouter = require('./routes/templates');
+var templateOrderRouter = require('./routes/templateOrder');
 var blocksRouter = require('./routes/blocks');
 var elementsRouter = require('./routes/elements');
 var battleCardsRouter = require('./routes/battleCards');
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 
 // add api routs
 app.use('/api/v1/frameworks', templatesRouter);
+app.use('/api/v1/frameworks', templateOrderRouter);
 app.use('/api/v1/frameworks', blocksRouter);
 app.use('/api/v1/frameworks', elementsRouter);
 app.use('/api/v1/frameworks', battleCardsRouter);
@@ -71,7 +73,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   // res.redirect('404.html');
   res.render('error');
-  next('test');
+  next('test next');
 });
 
 module.exports = app;
