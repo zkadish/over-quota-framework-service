@@ -18,6 +18,10 @@ const blockSchema = new Schema({
     default: '',
     required: true
   },
+  elements: {
+    type: Array,
+    default: [],
+  },
   type: {
     type: String,
     default: '',

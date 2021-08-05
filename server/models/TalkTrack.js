@@ -23,15 +23,9 @@ const talkTrackSchema = new Schema({
     default: '',
     required: true
   },
-  // containers: {
-  //   type: Array,
-  //   default: [],
-  //   required: true
-  // },
   corporate_id: {
     type: String,
     default: '',
-    // required: true
   },
   account_id: {
     type: String,

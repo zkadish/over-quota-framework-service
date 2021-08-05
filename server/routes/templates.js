@@ -131,9 +131,20 @@ router.get('/build-templates', async (req, res, next) => {
     const Templates = await Template.find({ account_id: req.headers['user-account-id'] });
     const templates = Templates.map(t => ({ ...t._doc }));
 
+    const Blocks = await Block.find({ account_id: req.headers['user-account-id'] });
+    const blocks = Blocks.map(b => ({ ...b._doc }));
+
+    const Elements = await Element.find({ account_id: req.headers['user-account-id'] });
+    const elements = Elements.map(b => ({ ...b._doc }));
+
+    const BattleCards = await BattleCard.find({ account_id: req.headers['user-account-id'] });
+    const battleCards = BattleCards.map(b => ({ ...b._doc }));
+
+    const TalkTracks = await TalkTrack.find({ account_id: req.headers['user-account-id'] });
+    const talkTracks = TalkTracks.map(b => ({ ...b._doc }));
+
+
     for (const template of templates) {
-      const Blocks = await Block.find({ container_id: template.id });
-      const blocks = Blocks.map(b => ({ ...b._doc }));
       const orderedBlocks = template.blocks.map(b => {
         const block = blocks.find(bl => bl.id === b);
         return block;
@@ -141,15 +152,20 @@ router.get('/build-templates', async (req, res, next) => {
       template.blocks = orderedBlocks;
     
       for (const block of template.blocks) {
-        const Elements = await Element.find({ container_id: block.id });
-        const elements = Elements.map(b => ({ ...b._doc }));
-        block.elements = elements;
+        const orderedElements = block.elements.map(e => {
+          const element = elements.find(ele => ele.id === e);
+          return element;
+        })
+        block.elements = orderedElements;
 
-        for (const element of block.elements) {
+        for (let element of block.elements) {
           if (element.type === 'battle-card') {
-            const BattleCardElements = await BattleCardElement.find({ container_id: element.id });
-            const battleCardElements = BattleCardElements.map(b => ({ ...b._doc }));
-            element['talk-tracks'] = battleCardElements;
+            const battleCard = battleCards.find(b => b.id === element.id);
+            const orderedTalkTracks = battleCard['talk-tracks'].map(t => {
+              const talkTrack = talkTracks.find(tt => tt.id === t);
+              return talkTrack;
+            });
+            element['talk-tracks'] = orderedTalkTracks;
           }
         }
       }
