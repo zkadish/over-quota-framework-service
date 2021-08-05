@@ -21,12 +21,10 @@ const battleCardSchema = new Schema({
   'talk-tracks': {
     type: Array,
     default: [],
-    required: true
   },
   corporate_id: {
     type: String,
     default: '',
-    // required: true
   },
   account_id: {
     type: String,

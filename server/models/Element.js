@@ -19,6 +19,7 @@ const elementSchema = new Schema({
     required: true
   },
   value: {},
+  'talk-tracks': [],
   type: {
     type: String,
     default: '',
