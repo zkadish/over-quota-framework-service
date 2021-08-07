@@ -8,6 +8,15 @@ const elementSchema = new Schema({
     unique: true,
     required: true
   },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  },
   container_id: {
     type: String,
     default: '',
@@ -18,21 +27,17 @@ const elementSchema = new Schema({
     default: '',
     required: true
   },
-  value: {},
-  'talk-tracks': [],
+  value: {}, // TODO: type cast value to a string, boolean or array of objects
+  // TODO: switch battle card talk-tracks to either elements or value
+  'talk-tracks': [], // talk-tracks are here for battle cards 
   type: {
     type: String,
     default: '',
     required: true
   },
-  corporate_id: {
-    type: String,
-    default: '',
-  },
-  account_id: {
-    type: String,
-    default: '',
-    required: true
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 

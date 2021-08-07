@@ -8,6 +8,15 @@ const talkTrackSchema = new Schema({
     unique: true,
     required: true
   },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  },
   label: {
     type: String,
     default: '',
@@ -23,14 +32,9 @@ const talkTrackSchema = new Schema({
     default: '',
     required: true
   },
-  corporate_id: {
-    type: String,
-    default: '',
-  },
-  account_id: {
-    type: String,
-    default: '',
-    required: true
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 

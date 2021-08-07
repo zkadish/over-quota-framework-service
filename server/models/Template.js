@@ -8,6 +8,15 @@ const templateSchema = new Schema({
     unique: true,
     required: true
   },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  },
   label: {
     type: String,
     default: '',
@@ -17,14 +26,9 @@ const templateSchema = new Schema({
     type: Array,
     default: [],
   },
-  corporate_id: {
-    type: String,
-    default: '',
-  },
-  account_id: {
-    type: String,
-    default: '',
-    required: true
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 

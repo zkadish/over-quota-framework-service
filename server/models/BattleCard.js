@@ -8,6 +8,15 @@ const battleCardSchema = new Schema({
     unique: true,
     required: true
   },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  },
   label: {
     type: String,
     default: '',
@@ -18,18 +27,13 @@ const battleCardSchema = new Schema({
     default: '',
     required: true
   },
-  'talk-tracks': {
+  'talk-tracks': { // TODO: convert this key to elements.. so different elements can be added to battle cards
     type: Array,
     default: [],
   },
-  corporate_id: {
-    type: String,
-    default: '',
-  },
-  account_id: {
-    type: String,
-    default: '',
-    required: true
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 
