@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const templateOrderSchema = new Schema({
-  templates: {
-    type: Array,
-    default: [],
+  id: {
+    type: String,
+    default: '',
+    unique: true,
+    required: true
   },
   corporate_id: {
     type: String,
@@ -19,6 +21,14 @@ const templateOrderSchema = new Schema({
     default: '',
     required: true,
     unique: true,
+  },
+  templates: {
+    type: Array,
+    default: [],
+  },
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 

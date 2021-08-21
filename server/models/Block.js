@@ -8,6 +8,15 @@ const blockSchema = new Schema({
     unique: true,
     required: true
   },
+  corporate_id: {
+    type: String,
+    default: '',
+  },
+  account_id: {
+    type: String,
+    default: '',
+    required: true
+  },
   container_id: {
     type: String,
     default: '',
@@ -27,14 +36,9 @@ const blockSchema = new Schema({
     default: '',
     required: true
   },
-  corporate_id: {
-    type: String,
-    default: '',
-  },
-  account_id: {
-    type: String,
-    default: '',
-    required: true
+  system: {
+    type: Boolean,
+    default: false,
   }
 });
 
