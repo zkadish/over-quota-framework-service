@@ -75,6 +75,7 @@ router.post(
       block.save();
 
       // add an instance of the battle card to the Elements collection
+      delete battleCard._id;
       battleCard.container_id = activeBlock.id;
       battleCard.account_id = headers['user-account-id'];
       const element = await Element.create(battleCard);
@@ -206,36 +207,77 @@ router.get('/battle-cards', async (req, res, next) => {
 );
 
 /**
- * PUT update battle card order in the battle card block
- * Not being used
+ * POST create a battle card talk track
+ * Adds the id of the talk track to every instance of the containing battle card's talk tracks
+ * Adds an instance of the talk track to the talk track library
  */
-//  router.put(
-//   '/battle-card-order',
-//   body('battleCards').isArray({ min: 0, max: 50 }), // TODO: add custom validation
-//   async (req, res) => {
-//     try {
-//       const errors = await validationResult(req);
-//       if (!errors.isEmpty()) throw errors;
+ router.post(
+  '/battle-card',
+  body('talkTrack').notEmpty(), // TODO: add custom validation
+  body('activeBattleCard').notEmpty(), // TODO: add custom validation
+  async (req, res) => {
+    try {
+      const errors = await validationResult(req);
+      if (!errors.isEmpty()) throw errors;
 
-//       const { headers } = req;
-//       const { body: { battleCards } } = req;
+      const { headers } = req;
+      const { body: { talkTrack, activeBattleCard } } = req;
 
-//       // updated the order of battle cards in a battle cards block
-//       // TODO: consider using a reference_id which points back to library instance
-//       const block = await Block.findOne({ id: battleCards[0].container_id, account_id: headers['user-account-id'] });
-//       block.elements = battleCards.map(b => b.id);
-//       const updatedBlock = block.save();
+      // update battle cards
+      const battleCards = Element.find({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
+      for (let i = 0; i < battleCards.length; i++) {
+        battleCards[i]['talk-tracks'].unshift(talkTrack.id);
+        await battleCards[i].save();
+      }
 
-//       res.status(200).json({ updatedBlock });
-//     } catch (error) {
-//       console.log(error);
-//       if (typeof error === 'string') {
-//         return res.status(400).json({ error });
-//       }
-//       return res.status(400).json({ errors: error.array() });
-//     }
-//   }
-// );
+      res.status(200).json({ battleCards });
+    } catch (error) {
+      console.log(error);
+      if (typeof error === 'string') {
+        return res.status(400).json({ error });
+      }
+      return res.status(400).json({ errors: error.array() });
+    }
+  }
+);
+
+/**
+ * PUT update battle card talk track order
+ */
+ router.put(
+  '/battle-card-talk-track-order',
+  body('talkTracks').notEmpty(), // TODO: add custom validation
+  body('activeBattleCard').notEmpty(), // TODO: add custom validation
+  async (req, res) => {
+    try {
+      const errors = await validationResult(req);
+      if (!errors.isEmpty()) throw errors;
+
+      const { headers } = req;
+      const { body: { talkTracks, activeBattleCard } } = req;
+
+      // update battle cards
+      const battleCards = await Element.find({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
+      for (let i = 0; i < battleCards.length; i++) {
+        battleCards[i]['talk-tracks'] = talkTracks.map(t => ({ ...t.id }));
+        await battleCards[i].save();
+      }
+
+      // update the battle card in the battle card library
+      const libraryBattleCard = await BattleCard.findOne({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
+      libraryBattleCard['talk-tracks'] = talkTracks.map(t => ({ ...t.id }));
+      const updatedLibraryBattleCard = await libraryBattleCard.save();
+
+      res.status(200).json({ battleCards, updatedLibraryBattleCard });
+    } catch (error) {
+      console.log(error);
+      if (typeof error === 'string') {
+        return res.status(400).json({ error });
+      }
+      return res.status(400).json({ errors: error.array() });
+    }
+  }
+);
 
 /**
  * DELETE remove a battle card from the battle card library

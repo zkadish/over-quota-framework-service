@@ -223,11 +223,14 @@ router.get('/build-templates', async (req, res, next) => {
         for (let element of block.elements) {
           if (element && element.type === 'battle-card') {
             const battleCard = battleCards.find(b => b.id === element.id);
-            const orderedTalkTracks = battleCard['talk-tracks'].map(t => {
-              const talkTrack = talkTracks.find(tt => tt.id === t);
-              return talkTrack;
-            });
-            element['talk-tracks'] = orderedTalkTracks;
+            if (battleCard) {
+              const orderedTalkTracks = battleCard['talk-tracks'].map(t => {
+                const talkTrack = talkTracks.find(tt => tt.id === t);
+                talkTrack.container_id = battleCard.id;
+                return talkTrack;
+              });
+              element['talk-tracks'] = orderedTalkTracks;
+            }
           }
         }
       }
