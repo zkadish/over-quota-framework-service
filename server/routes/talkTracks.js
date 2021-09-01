@@ -22,8 +22,7 @@ router.post(
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;
 
-      const { headers } = req;
-      const { body } = req;
+      const { body, headers } = req;
 
       const exists = await TalkTrack.findOne({
         account_id: headers['user-account-id'],
@@ -71,12 +70,14 @@ router.post(
       const { headers } = req;
       const { body: { talkTrack, activeContainer }, } = req;
 
-      // add the block id to the beginning of the containing battle card talk tracks list
+      // add the talk track id to the beginning of the containing battle card talk tracks list
       if (activeContainer.type === 'battle-card') {
+        // battle card library
         const battleCard = await BattleCard.findOne({ id: activeContainer.id, account_id: headers['user-account-id'] });
         battleCard['talk-tracks'].unshift(talkTrack.id);
         await battleCard.save();
 
+        // battle card elements
         const battleCards = await Element.find({ id: activeContainer.id, account_id: headers['user-account-id'] });
         for (let i = 0; i < battleCards.length; i++) {
           battleCards[i]['talk-tracks'].unshift(talkTrack.id);
@@ -93,12 +94,12 @@ router.post(
       }
 
       // sanitize, update add an instance of the battle card to the Elements collection
-      delete talkTrack._id;
-      talkTrack.container_id = activeContainer.id;
-      talkTrack.account_id = headers['user-account-id'];
-      const element = await Element.create(talkTrack);
+      // delete talkTrack._id;
+      // talkTrack.container_id = activeContainer.id;
+      // talkTrack.account_id = headers['user-account-id'];
+      // const element = await Element.create(talkTrack);
 
-      res.status(200).json(element);
+      res.status(200).json(talkTrack);
     } catch (error) {
       console.log(error);
       if (typeof error === 'string') {
