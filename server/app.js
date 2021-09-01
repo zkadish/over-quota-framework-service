@@ -15,6 +15,7 @@ var blocksRouter = require('./routes/blocks');
 var elementsRouter = require('./routes/elements');
 var battleCardsRouter = require('./routes/battleCards');
 var talkTracksRouter = require('./routes/talkTracks');
+var eventsRouter = require('./routes/events');
 
 const db = initMongo();
 var app = express();
@@ -53,6 +54,7 @@ app.use('/api/v1/frameworks', blocksRouter);
 app.use('/api/v1/frameworks', elementsRouter);
 app.use('/api/v1/frameworks', battleCardsRouter);
 app.use('/api/v1/frameworks', talkTracksRouter);
+app.use('/api/v1/frameworks', eventsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

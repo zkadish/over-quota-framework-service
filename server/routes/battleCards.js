@@ -259,13 +259,13 @@ router.get('/battle-cards', async (req, res, next) => {
       // update battle cards
       const battleCards = await Element.find({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
       for (let i = 0; i < battleCards.length; i++) {
-        battleCards[i]['talk-tracks'] = talkTracks.map(t => ({ ...t.id }));
+        battleCards[i]['talk-tracks'] = talkTracks.map(t => t.id);
         await battleCards[i].save();
       }
 
       // update the battle card in the battle card library
       const libraryBattleCard = await BattleCard.findOne({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
-      libraryBattleCard['talk-tracks'] = talkTracks.map(t => ({ ...t.id }));
+      libraryBattleCard['talk-tracks'] = talkTracks.map(t => t.id);
       const updatedLibraryBattleCard = await libraryBattleCard.save();
 
       res.status(200).json({ battleCards, updatedLibraryBattleCard });
