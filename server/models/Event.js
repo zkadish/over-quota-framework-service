@@ -5,7 +5,7 @@ const EventSchema = new Schema({
   id: {
     type: String,
     default: '',
-    unique: true,
+    // unique: true,
     required: true
   },
   corporate_id: {

@@ -174,10 +174,7 @@ router.delete(
       // remove the blocks elements
       if (body.elements.length > 0) {
         for (let i = 0; i < body.elements.length; i++) {
-          await Element.deleteMany({ container_id: body.id })
-            .then(deleted => {
-              console.log(deleted)
-            });
+          const deletedElements = await Element.deleteMany({ container_id: body.id });
         }
       }
 
@@ -211,10 +208,8 @@ router.delete(
  * GET templates list by account_id
  */
  router.get('/blocks', async (req, res, next) => {
-  console.log('/blocks')
   try {
     const blocks = await Block.find({ account_id: req.headers['user-account-id'] });
-    // TODO: sanitize remove mongo _id
 
     res.status(200).json({ blocks });
   } catch (error) {
@@ -230,7 +225,6 @@ router.delete(
   '/blocks',
   body('blocks').isArray({ min: 1 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;

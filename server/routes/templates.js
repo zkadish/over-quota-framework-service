@@ -9,6 +9,67 @@ const Element = require('../models/Element');
 const TalkTrack = require('../models/TalkTrack');
 const BattleCard = require('../models/BattleCard');
 
+/**
+ * GET - build templates list by account_id
+ * This gets call when a user logs into the app.
+ * Fetches and builds the client side template.
+ */
+ router.get('/build-templates', async (req, res, next) => {
+  try {
+    const Templates = await Template.find({ account_id: req.headers['user-account-id'] });
+    const templates = Templates.map(t => ({ ...t._doc }));
+
+    const Blocks = await Block.find({ account_id: req.headers['user-account-id'] });
+    const blocks = Blocks.map(b => ({ ...b._doc }));
+
+    const Elements = await Element.find({ account_id: req.headers['user-account-id'] });
+    const elements = Elements.map(b => ({ ...b._doc }));
+
+    const BattleCards = await BattleCard.find({ account_id: req.headers['user-account-id'] });
+    const battleCards = BattleCards.map(b => ({ ...b._doc }));
+
+    const TalkTracks = await TalkTrack.find({ account_id: req.headers['user-account-id'] });
+    const talkTracks = TalkTracks.map(b => ({ ...b._doc }));
+
+
+    for (const template of templates) {
+      const orderedBlocks = template.blocks.map(b => {
+        const block = blocks.find(bl => bl.id === b);
+        return block;
+      })
+      template.blocks = orderedBlocks;
+    
+      for (const block of template.blocks) {
+        // if (!block) return;
+        const orderedElements = block.elements.map(e => { // block is undefined???
+          const element = elements.find(ele => ele.id === e);
+          return element;
+        })
+        block.elements = orderedElements;
+
+        // if (block.elements.length === 0) return;
+        for (let element of block.elements) {
+          if (element && element.type === 'battle-card') {
+            const battleCard = battleCards.find(b => b.library_id === element.library_id);
+            if (battleCard) {
+              const orderedTalkTracks = battleCard['talk-tracks'].map(t => {
+                const talkTrack = talkTracks.find(tt => tt.id === t);
+                talkTrack.container_id = battleCard.id;
+                return talkTrack;
+              });
+              element['talk-tracks'] = orderedTalkTracks;
+            }
+          }
+        }
+      }
+    }
+
+    res.status(200).json({ templates });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 /* POST create a template */
 router.post(
   '/template',
@@ -138,17 +199,11 @@ router.delete(
         // delete the template's blocks elements
         for (let i = 0; i < blocks.length; i++) {
           if (blocks[i].elements.length > 0) {
-            await Element.deleteMany({ container_id: blocks[i].id })
-              .then(data => {
-                console.log('deleted elements', data)
-              });
+            const deletedElements = await Element.deleteMany({ container_id: blocks[i].id });
           }
         }
         // delete the template's blocks
-        await Block.deleteMany({ container_id: body.id })
-          .then(data => {
-            console.log('deleted blocks', data)
-          });
+        const deletedBlocks = await Block.deleteMany({ container_id: body.id });
       }
 
       // delete the template // TODO: use deleteOne()?
@@ -170,71 +225,9 @@ router.delete(
  * GET templates list by account_id
  */
 router.get('/templates', async (req, res, next) => {
-  console.log('/templates')
   try {
     const templates = await Template.find({ account_id: req.headers['user-account-id'] });
-    // TODO: sanitize remove mongo _id
 
-    res.status(200).json({ templates });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-/**
- * GET build templates list by account_id
- * fetches and builds the client side template.
- */
-router.get('/build-templates', async (req, res, next) => {
-  console.log('/build-templates')
-  try {
-    const Templates = await Template.find({ account_id: req.headers['user-account-id'] });
-    const templates = Templates.map(t => ({ ...t._doc }));
-
-    const Blocks = await Block.find({ account_id: req.headers['user-account-id'] });
-    const blocks = Blocks.map(b => ({ ...b._doc }));
-
-    const Elements = await Element.find({ account_id: req.headers['user-account-id'] });
-    const elements = Elements.map(b => ({ ...b._doc }));
-
-    const BattleCards = await BattleCard.find({ account_id: req.headers['user-account-id'] });
-    const battleCards = BattleCards.map(b => ({ ...b._doc }));
-
-    const TalkTracks = await TalkTrack.find({ account_id: req.headers['user-account-id'] });
-    const talkTracks = TalkTracks.map(b => ({ ...b._doc }));
-
-
-    for (const template of templates) {
-      const orderedBlocks = template.blocks.map(b => {
-        const block = blocks.find(bl => bl.id === b);
-        return block;
-      })
-      template.blocks = orderedBlocks;
-    
-      for (const block of template.blocks) {
-        // if (!block) return;
-        const orderedElements = block.elements.map(e => {
-          const element = elements.find(ele => ele.id === e);
-          return element;
-        })
-        block.elements = orderedElements;
-
-        // if (block.elements.length === 0) return;
-        for (let element of block.elements) {
-          if (element && element.type === 'battle-card') {
-            const battleCard = battleCards.find(b => b.id === element.id);
-            if (battleCard) {
-              const orderedTalkTracks = battleCard['talk-tracks'].map(t => {
-                const talkTrack = talkTracks.find(tt => tt.id === t);
-                talkTrack.container_id = battleCard.id;
-                return talkTrack;
-              });
-              element['talk-tracks'] = orderedTalkTracks;
-            }
-          }
-        }
-      }
-    }
     res.status(200).json({ templates });
   } catch (error) {
     console.log(error);
@@ -249,7 +242,6 @@ router.post(
   '/templates',
   body('templates').isArray({ min: 1 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;

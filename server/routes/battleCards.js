@@ -94,10 +94,8 @@ router.post(
 
 /* GET battleCards list */
 router.get('/battle-cards', async (req, res, next) => {
-  console.log('/battle-cards')
   try {
     const battleCards = await BattleCard.find({ account_id: req.headers['user-account-id'] });
-    // console.log(battleCards);
     res.status(200).json({ battleCards });
   } catch (error) {
     console.log(error);
@@ -112,7 +110,6 @@ router.get('/battle-cards', async (req, res, next) => {
   '/battle-cards',
   body('battleCards').isArray({ min: 1 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;
@@ -184,14 +181,12 @@ router.get('/battle-cards', async (req, res, next) => {
 
       // find all instances of the battle card across all templates
       // TODO: consider using a reference_id which points back to library instance
-      await Element.updateMany(
-        { id: body.id, account_id: headers['user-account-id'] },
+      const updatedElements = await Element.updateMany(
+        { library_id: body.library_id, account_id: headers['user-account-id'] },
         { $set: { label: body.label } },
-      ).then(updated => {
-        console.log(updated);
-      });
+      );
 
-      const battleCard = await BattleCard.findOne({ id: body.id });
+      const battleCard = await BattleCard.findOne({ library_id: body.library_id });
       battleCard.label = body.label;
       const updatedBattleCard = await battleCard.save();
 
@@ -296,10 +291,7 @@ router.get('/battle-cards', async (req, res, next) => {
 
       // find all instances of the battle across all templates
       // TODO: consider using a reference_id which points back to library instance
-      await Element.deleteMany({ id: body.id, account_id: headers['user-account-id'] })
-        .then(deleted => {
-          console.log(deleted);
-        });
+      const deletedElements = await Element.deleteMany({ id: body.id, account_id: headers['user-account-id'] });
 
       // remove the battle card's id in block battle cards element lists
       const battleCards = await Block.find({ account_id: headers['user-account-id'], type: 'battle-cards' });
