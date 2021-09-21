@@ -191,7 +191,6 @@ router.delete(
  * GET templates list by account_id
  */
  router.get('/elements', async (req, res, next) => {
-  console.log('/elements')
   try {
     const elements = await Element.find({ account_id: req.headers['user-account-id'] });
     // TODO: sanitize remove mongo _id
@@ -210,7 +209,6 @@ router.delete(
   '/elements',
   body('elements').isArray({ min: 1 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;

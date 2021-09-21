@@ -22,6 +22,12 @@ const elementSchema = new Schema({
     default: '',
     required: true
   },
+  library_id: {
+    type: String,
+    default: '',
+    unique: true,
+    // required: true
+  },
   label: {
     type: String,
     default: '',

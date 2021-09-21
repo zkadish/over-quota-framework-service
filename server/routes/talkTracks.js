@@ -73,12 +73,12 @@ router.post(
       // add the talk track id to the beginning of the containing battle card talk tracks list
       if (activeContainer.type === 'battle-card') {
         // battle card library
-        const battleCard = await BattleCard.findOne({ id: activeContainer.id, account_id: headers['user-account-id'] });
+        const battleCard = await BattleCard.findOne({ library_id: activeContainer.library_id, account_id: headers['user-account-id'] });
         battleCard['talk-tracks'].unshift(talkTrack.id);
         await battleCard.save();
 
         // battle card elements
-        const battleCards = await Element.find({ id: activeContainer.id, account_id: headers['user-account-id'] });
+        const battleCards = await Element.find({ library_id: activeContainer.library_id, account_id: headers['user-account-id'] });
         for (let i = 0; i < battleCards.length; i++) {
           battleCards[i]['talk-tracks'].unshift(talkTrack.id);
           await battleCards[i].save();
@@ -88,7 +88,7 @@ router.post(
       // add the battle card id to the beginning of the containing blocks element list
       // add the talk track to the elements collection
       if (activeContainer.type !== 'battle-card') {
-        const block = await Block.findOne({ id: activeContainer.id, account_id: headers['user-account-id'] });
+        const block = await Block.findOne({ library_id: activeContainer.library_id, account_id: headers['user-account-id'] });
         block.elements.unshift(talkTrack.id);
         block.save();
       }
@@ -113,7 +113,6 @@ router.post(
 
 /* GET talkTracks list */
 router.get('/talk-tracks', async (req, res, next) => {
-  console.log('/talk-tracks')
   try {
     const talkTracks = await TalkTrack.find({ account_id: req.headers['user-account-id'] });
     // TODO: sanitize remove mongo _id
@@ -132,7 +131,6 @@ router.get('/talk-tracks', async (req, res, next) => {
   '/talk-tracks',
   body('talkTracks').isArray({ min: 1 }),
   async (req, res) => {
-    console.log(req.body);
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;
@@ -169,14 +167,15 @@ router.get('/talk-tracks', async (req, res, next) => {
       const { headers } = req;
 
       // update talk track in talk track library
-      const libraryTalkTrack = await TalkTrack.findOne({ id: talkTrack.id, account_id: headers['user-account-id'] });
+      const libraryTalkTrack = await TalkTrack.findOne({ library_id: talkTrack.library_id, account_id: headers['user-account-id'] });
       libraryTalkTrack.label = talkTrack.label;
       libraryTalkTrack.value = talkTrack.value;
       await libraryTalkTrack.save();
 
       // Update talk track in elements collection that is not a battle card.
       // Talk tracks in battle cards do not get updated as they are tracked via their library ids
-      const talkTracks = await Element.find({ id: talkTrack.container_id, account_id: headers['user-account-id'] });
+      // const talkTracks = await Element.find({ id: talkTrack.container_id, account_id: headers['user-account-id'] });
+      const talkTracks = await Element.find({ library_id: talkTrack.library_id, account_id: headers['user-account-id'] });
       for (let i = 0; i < talkTracks.length; i++) {
         if (talkTracks[i].type === 'talk-track') {
           talkTracks[i].label = talkTrack.label;
@@ -206,57 +205,60 @@ router.get('/talk-tracks', async (req, res, next) => {
  router.delete(
   '/talk-track',
   body('talkTrack').notEmpty(),
-  // body('activeContainer').notEmpty(),
+  body('activeContainer').notEmpty(),
   async (req, res) => {
     try {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;
 
-      const { body: { talkTrack } } = req;
-      const { headers } = req;
+      const { body: { talkTrack, activeContainer }, headers } = req;
 
-      // if the talk track is being deleted from a battle card
-      const battleCards = await Element.find({ id: talkTrack.container_id, account_id: headers['user-account-id'] });
+      // if the talk track is being deleted from a battle card in the battle card library
+      const battleCard = await BattleCard.findOne({ 'talk-tracks': talkTrack.id, account_id: headers['user-account-id'] });
+
+      // if the talk track is being deleted from a battle card element
+      const BattleCardElements = await Element.find({ type: 'battle-card', 'talk-tracks': talkTrack.id, account_id: headers['user-account-id'] });
 
       // if the talk track is being deleted from a block
       const block = await Block.findOne({ id: talkTrack.container_id, account_id: headers['user-account-id'] });
 
-      if (battleCards.length > 0) {
+      if (battleCard) {
+        battleCard['talk-tracks'] = battleCard['talk-tracks'].filter(id => id !== talkTrack.id);
+        const updatedBattleCard = await battleCard.save();
+      }
+
+      if (BattleCardElements.length > 0) {
         // remove the talk track from the battle card elements 
-        for (let i = 0; i < battleCards.length; i++) {
-          const index = battleCards[i]['talk-tracks'].find(id => id === talkTrack.id);
-          battleCards[i]['talk-tracks'].splice(index, 1);
-          await battleCards[i].save();
+        for (let i = 0; i < BattleCardElements.length; i++) {
+          BattleCardElements[i]['talk-tracks'] = BattleCardElements[i]['talk-tracks'].filter(id => id !== talkTrack.id);
+          await BattleCardElements[i].save();
         }
 
-        // TODO: get ids from battleCards and remove duplicates
-        // remove the talk track from battle cards in the battle card library
-        let battleCardIds = battleCards.map(b => b.id);
-        const setBattleCardIds = new Set(battleCardIds);
-        battleCardIds = Array.from(setBattleCardIds);
-        for (let i = 0; i < battleCardIds.length; i++) {
-          const libraryBattleCard = await BattleCard.findOne({ id: battleCardIds[i] });
-          const index = libraryBattleCard['talk-tracks'].findIndex(id => id === talkTrack.id);
-          if (index >= 0) {
-            libraryBattleCard['talk-tracks'].splice(index, 1);
-            await libraryBattleCard.save();
-          }
-        }
+        // // TODO: get ids from battleCards and remove duplicates
+        // // remove the talk track from battle cards in the battle card library
+        // let battleCardIds = battleCards.map(b => b.id);
+        // const setBattleCardIds = new Set(battleCardIds);
+        // battleCardIds = Array.from(setBattleCardIds);
+        // for (let i = 0; i < battleCardIds.length; i++) {
+        //   const libraryBattleCard = await BattleCard.findOne({ id: battleCardIds[i] });
+        //   const index = libraryBattleCard['talk-tracks'].findIndex(id => id === talkTrack.id);
+        //   if (index >= 0) {
+        //     libraryBattleCard['talk-tracks'].splice(index, 1);
+        //     await libraryBattleCard.save();
+        //   }
+        // }
       }
 
       if (block) {
         // delete the element from the elements collection
-        const deleted = await Element.findOne({ id: talkTrack.id });
-        deleted.remove();
+        const element = await Element.findOne({ id: talkTrack.id });
+        const deletedElement = await deleted.remove();
         // delete the element id from its block container
-        const index = block.elements.find(id => id === talkTrack.id);
-        block.elements.splice(index, 1);
-        await block.save();
+        block.elements = block.elements.filter(id => id !== talkTrack.id);
+        const updatedBlock = await block.save();
       }
-
-      const updated = battleCards || block;
       
-      res.status(200).json(updated);
+      res.status(200).json('The talk track was successfully deleted.');
     } catch (error) {
       console.log(error);
       if (typeof error === 'string') {
@@ -281,27 +283,26 @@ router.get('/talk-tracks', async (req, res, next) => {
       const errors = await validationResult(req);
       if (!errors.isEmpty()) throw errors;
 
-      const { headers } = req;
-      const { body } = req;
+      const { body, headers } = req;
 
       // find all instances of the talk track across all templates and delete them
       // TODO: consider using a reference_id which points back to library instance
       // remove all talk tracks from the Elements collection
-      await Element.deleteMany({ id: body.id, account_id: headers['user-account-id'] })
-        .then(deleted => {
-          console.log(deleted);
-        });
+      // const deletedElements = await Element.deleteMany({ id: body.id, account_id: headers['user-account-id'] });
+      const deletedElements = await Element.deleteMany({ library_id: body.library_id, account_id: headers['user-account-id'] });
 
       // remove all talk track ids from battle cards in the Elements collection
-      const battleCards = await Element.find({ type: 'battle-card' });
-      for (let i = 0; i < battleCards.length; i++) {
-        const index = battleCards[i]['talk-tracks'].findIndex(id => id === body.id);
-        battleCards[i]['talk-tracks'].splice(index, 1);
-        await battleCards[i].save();
+      const battleCards = await Element.find({ 'talk-tracks': body.id, type: 'battle-card', account_id: headers['user-account-id'] });
+      if (battleCards.length > 0) {
+        for (let i = 0; i < battleCards.length; i++) {
+          const index = battleCards[i]['talk-tracks'].findIndex(id => id === body.id);
+          battleCards[i]['talk-tracks'].splice(index, 1);
+          await battleCards[i].save();
+        }
       }
 
       // remove the talk track id from battle cards in the battle card library
-      const libraryBattleCards = await BattleCard.find();
+      const libraryBattleCards = await BattleCard.find({ 'talk-tracks': body.id, account_id: headers['user-account-id'] });
       for (let i = 0; i < libraryBattleCards.length; i++) {
         const index = libraryBattleCards[i]['talk-tracks'].findIndex(id => id === body.id);
         if (index >= 0) {
