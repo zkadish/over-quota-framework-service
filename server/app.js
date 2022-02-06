@@ -1,6 +1,7 @@
 var path = require('path');
 require('dotenv').config();
 var express = require('express');
+const cors = require('cors');
 const { initMongo } = require('./config/mongo/db');
 
 var createError = require('http-errors');
@@ -24,6 +25,9 @@ app.disable('x-powered-by');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// cors is set for every route
+app.use(cors())
 
 // set up logger
 app.use(logger('dev'));
