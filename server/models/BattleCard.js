@@ -23,6 +23,11 @@ const battleCardSchema = new Schema({
     unique: true,
     // required: true
   },
+  container_id: {
+    type: String,
+    default: '',
+    // required: true
+  },
   label: {
     type: String,
     default: '',
