@@ -1,7 +1,7 @@
 var path = require('path');
 require('dotenv').config();
 var express = require('express');
-const cors = require('cors');
+// const cors = require('cors');
 const { initMongo } = require('./config/mongo/db');
 
 var createError = require('http-errors');
@@ -27,7 +27,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // cors is set for every route
-app.use(cors())
+// app.use(cors({
+//   origin: [
+//     'http://localhost',
+//     'http://dev.auth.spa.overquota.io',
+//     'https://dev.auth.spa.overquota.io',
+//   ],
+// }))
+// app.options('*', cors()) // cors is set for every preflight route
 
 // set up logger
 app.use(logger('dev'));
@@ -43,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // remove the trialing slash from incoming routes
 app.use((req, res, next) => {
-	if (req.path.substr(-1) == '/' && req.path.length > 1) {
+	if (req.path.endsWith('/') && req.path.length > 1) {
 		const query = req.url.slice(req.path.length)
 		res.redirect(301, req.path.slice(0, -1) + query)
 	} else {
