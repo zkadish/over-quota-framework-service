@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const StartDate = new Schema({
+  dateTime: {
+    type: Date,
+  },
+  time: {
+    type: String, 
+    default: ''
+  }
+})
+
 const EventSchema = new Schema({
   id: {
     type: String,
@@ -34,17 +44,28 @@ const EventSchema = new Schema({
     type: String,
     default: '',
   },
-  dateObj: {
+  date: {
     type: Date,
   },
+  // start: [StartDate],
+  // start: {
+  //   type: Object,
+  //   default: {},
+  //   required: true
+  // },
   start: {
-    type: Object,
-    default: {},
-    required: true
+    dateTime: { type: Date },
+    time: { type: String },
+    timeZone: { type: String },
   },
+  // end: {
+  //   type: Object,
+  //   default: {},
+  // },
   end: {
-    type: Object,
-    default: {},
+    dateTime: { type: Date },
+    time: { type: String },
+    timeZone: { type: String },
   },
   attendees: {
     type: Array,
