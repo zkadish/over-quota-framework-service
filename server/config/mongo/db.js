@@ -7,7 +7,7 @@ const initMongo = async () => {
     await mongoose.connect(mongoDB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
+      // useCreateIndex: true, // no longer supported
     });
     console.log('mongoDB connected', mongoDB);
   } catch (error) {
