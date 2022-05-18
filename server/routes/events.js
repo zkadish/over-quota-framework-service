@@ -167,23 +167,15 @@ router.put(
 /**
  * GET the last 10 account events for an account
  */
-// TODO: limit the number of events retrieved to a date in the past
 router.get('/call-events', async (req, res, next) => {
   try {
     const { headers, body } = req;
-    // const startDateIso = new Date(body.startDate).toISOString();
     const startDate = new Date(body.startDate);
     const endDate = new Date(body.endDate);
   
     const events = await Event.find({
       account_id: headers['user-account-id'],
-      date: { $gte: startDate, $lt: endDate },
-      // start: {
-      //   // dateTime: { $gte: new Date('2021-05-02'), $lt: new Date('2022-06-01') },
-      //   // dateTime: { $gte: new Date(startDateIso) },
-      //   // dateTime: { $gte: new Date(startDate) },
-      //   dateTime: { $gte: '2021-05-02', $lte: '2022-06-02' },
-      // },
+      'start.dateTime': { $gte: startDate, $lt: endDate },
     });
 
     res.status(200).json({ events });
