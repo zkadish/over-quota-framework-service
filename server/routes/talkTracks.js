@@ -74,7 +74,7 @@ router.post(
       if (activeContainer.type === 'battle-card') {
         // battle card library
         const battleCard = await BattleCard.findOne({ library_id: activeContainer.library_id, account_id: headers['user-account-id'] });
-        battleCard['talk-tracks'].unshift(talkTrack.id);
+        battleCard['talk-tracks'].push(talkTrack.id);
         await battleCard.save();
 
         // battle card elements

@@ -1,4 +1,4 @@
-# OverQuota Authn Authz Service Server Set Up
+# OverQuota Frameworks Service Server Set Up
 
 - Create droplet with ssh access on DigitalOcean
   
@@ -14,8 +14,23 @@
   
 - Used this post to install nginx <https://www.linuxbabe.com/ubuntu/install-nginx-latest-version-ubuntu-18-04>
 
-## User PM2 to launch the application
+## Deploying changes to the live auth server
 
-- $ NODE_ENV=production pm2 start ecosystem.config.js
+- https://dev.frameworks.service.viewportmedia.org/
 
-- $ pm2 save
+- $ deploy/scp-devFrameworksService.sh
+
+- $ ssh zsysadmin@143.198.232.218
+
+- $ cd /var/appdata/frameworks/
+
+- $ npm ci
+  
+## Restart the node and nginx services
+
+- $ pm2 restart pm2.config.js --env development --attach && pm2 save
+
+- $ pm2 restart pm2.config.js --env production --attach && pm2 save
+
+- $ sudo systemctl restart nginx
+

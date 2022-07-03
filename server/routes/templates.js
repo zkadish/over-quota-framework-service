@@ -101,7 +101,7 @@ router.post(
         return;
       }
       // add template id to the top of the list
-      templateOrder.templates = [body.id, ...templateOrder.templates];
+      templateOrder.templates = [...templateOrder.templates, body.id];
       templateOrder.save();
 
       // prepare blocks for update, add account_id from user and template container_id
