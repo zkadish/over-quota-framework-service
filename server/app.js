@@ -30,8 +30,8 @@ app.set('view engine', 'ejs');
 // app.use(cors({
 //   origin: [
 //     'http://localhost',
-//     'http://dev.auth.spa.overquota.io',
-//     'https://dev.auth.spa.overquota.io',
+//     'https://dev.auth.spa.viewportmedia.org',
+//     'https://dev.auth.spa.viewportmedia.org',
 //   ],
 // }))
 // app.options('*', cors()) // cors is set for every preflight route

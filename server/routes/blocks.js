@@ -47,7 +47,7 @@ router.post(
       ) {
         template.blocks.splice(2, 0, body.id);
       } else {
-        template.blocks = [body.id, ...template.blocks];
+        template.blocks = [...template.blocks, body.id];
       }
       const updatedTemplate = await template.save();
 

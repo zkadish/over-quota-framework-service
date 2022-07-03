@@ -35,7 +35,7 @@ router.post(
 
       // update containing block's element list
       const block = await Block.findOne({ id: body.container_id });
-      block.elements = [body.id, ...block.elements];
+      block.elements = [...block.elements, body.id];
       const updatedTemplate = await block.save();
 
       body.account_id = headers['user-account-id'];      

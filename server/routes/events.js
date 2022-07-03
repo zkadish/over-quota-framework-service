@@ -167,7 +167,9 @@ router.put(
 /**
  * GET the last 10 account events for an account
  */
-router.get('/call-events', async (req, res, next) => {
+// this is used to get events on login in to the desktop app
+// TODO: fix when there are no events to get.
+ router.get('/call-events', async (req, res, next) => {
   try {
     const { headers, body } = req;
     const startDate = new Date(body.startDate);
@@ -176,6 +178,24 @@ router.get('/call-events', async (req, res, next) => {
     const events = await Event.find({
       account_id: headers['user-account-id'],
       'start.dateTime': { $gte: startDate, $lt: endDate },
+    });
+
+    res.status(200).json({ events });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// this is used to populate events in auth service provision user
+router.get('/events', async (req, res, next) => {
+  try {
+    const { headers, body } = req;
+    const startDate = new Date(body.startDate);
+    const endDate = new Date(body.endDate);
+  
+    const events = await Event.find({
+      account_id: headers['user-account-id'],
+      // 'start.dateTime': { $gte: startDate, $lt: endDate },
     });
 
     res.status(200).json({ events });

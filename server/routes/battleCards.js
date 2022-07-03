@@ -71,7 +71,7 @@ router.post(
 
       // add the battle card id to the beginning of the containing blocks element list
       const block = await Block.findOne({ id: activeBlock.id, account_id: headers['user-account-id'] });
-      block.elements.unshift(battleCard.id);
+      block.elements.push(battleCard.id);
       block.save();
 
       // add an instance of the battle card to the Elements collection
@@ -151,6 +151,8 @@ router.get('/battle-cards', async (req, res, next) => {
       block.elements.splice(index, 1);
 
       const updatedBlock = await block.save();
+
+      const element = await Element.deleteOne({ account_id: headers['user-account-id'], id: battleCard.id })
 
       res.status(200).json(updatedBlock);
     } catch (error) {
@@ -251,15 +253,15 @@ router.get('/battle-cards', async (req, res, next) => {
       const { headers } = req;
       const { body: { talkTracks, activeBattleCard } } = req;
 
-      // update battle cards
-      const battleCards = await Element.find({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
+      // update battle card out side the battle card library
+      const battleCards = await Element.find({ library_id: activeBattleCard.library_id, account_id: headers['user-account-id'] });
       for (let i = 0; i < battleCards.length; i++) {
         battleCards[i]['talk-tracks'] = talkTracks.map(t => t.id);
         await battleCards[i].save();
       }
 
       // update the battle card in the battle card library
-      const libraryBattleCard = await BattleCard.findOne({ id: activeBattleCard.id, account_id: headers['user-account-id'] });
+      const libraryBattleCard = await BattleCard.findOne({ library_id: activeBattleCard.library_id, account_id: headers['user-account-id'] });
       libraryBattleCard['talk-tracks'] = talkTracks.map(t => t.id);
       const updatedLibraryBattleCard = await libraryBattleCard.save();
 
@@ -289,26 +291,26 @@ router.get('/battle-cards', async (req, res, next) => {
       const { headers } = req;
       const { body } = req;
 
-      // find all instances of the battle across all templates
+      // find all instances of the battle card across all templates
       // TODO: consider using a reference_id which points back to library instance
-      const deletedElements = await Element.deleteMany({ id: body.id, account_id: headers['user-account-id'] });
+      const deletedElements = await Element.deleteMany({ library_id: body.library_id, account_id: headers['user-account-id'] });
 
       // remove the battle card's id in block battle cards element lists
-      const battleCards = await Block.find({ account_id: headers['user-account-id'], type: 'battle-cards' });
-      const filteredBattleCards = battleCards.filter(b => {
-        return b.elements.some(id => id === body.id);
-      });
-      if (filteredBattleCards.length > 0) {
-        const updatedBattleCards = filteredBattleCards.map(b => {
-          const index = b.elements.findIndex(id => id === body.id);
-          b.elements.splice(index, 1);
-          return b;
-        });
+      // const battleCards = await Block.find({ account_id: headers['user-account-id'], type: 'battle-cards' });
+      // const filteredBattleCards = battleCards.filter(b => {
+      //   return b.elements.some(id => id === body.id);
+      // });
+      // if (filteredBattleCards.length > 0) {
+      //   const updatedBattleCards = filteredBattleCards.map(b => {
+      //     const index = b.elements.findIndex(id => id === body.id);
+      //     b.elements.splice(index, 1);
+      //     return b;
+      //   });
 
-        for (let i = 0; i < updatedBattleCards.length; i++) {
-          await updatedBattleCards[i].save();
-        }
-      }
+      //   for (let i = 0; i < updatedBattleCards.length; i++) {
+      //     await updatedBattleCards[i].save();
+      //   }
+      // }
 
       // remove the battle card from the library
       const battleCard = await BattleCard.findOne({ id: body.id });

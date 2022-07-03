@@ -1,3 +1,4 @@
+console.log('NODE_ENV=', process.env.NODE_ENV);
 if (process.env.MODE === 'local') {
   // console.log(process.env.MONGO_LOCAL);
   module.exports = {
