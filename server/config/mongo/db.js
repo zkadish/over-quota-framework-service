@@ -1,23 +1,18 @@
-const { mongoDB } = require('./index');
+const getMongoSettings = require('./index');
 const mongoose = require('mongoose');
-// const MongoStore = require('connect-mongo').default;
 
 const initMongo = async () => {
+  const mongoConfig = getMongoSettings();
   try {
-    await mongoose.connect(mongoDB, {
+    await mongoose.connect(mongoConfig.mongoDB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // useCreateIndex: true, // no longer supported
     });
-    console.log('mongoDB connected', mongoDB);
+    console.log('mongoDB connected', mongoConfig.mongoDB);
   } catch (error) {
-    // console.log('TEST');
     console.error(error);
     process.exit(1);
   }
 };
 
-// const mongoSessionStore = MongoStore.create({ mongoUrl: mongoSession });
-
 module.exports = { initMongo };
-// module.exports = { initMongo };
