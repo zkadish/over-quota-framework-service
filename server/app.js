@@ -2,6 +2,7 @@ var path = require('path');
 require('dotenv').config();
 var express = require('express');
 // const cors = require('cors');
+const getSecrets = require('./config/aws/secrets');
 const { initMongo } = require('./config/mongo/db');
 
 var createError = require('http-errors');
@@ -18,7 +19,6 @@ var battleCardsRouter = require('./routes/battleCards');
 var talkTracksRouter = require('./routes/talkTracks');
 var eventsRouter = require('./routes/events');
 
-const db = initMongo();
 var app = express();
 app.disable('x-powered-by');
 
@@ -87,6 +87,19 @@ app.use(function(err, req, res, next) {
   // res.redirect('404.html');
   res.render('error');
   next('test next');
+});
+
+/**
+ * get aws secrets and init DB
+ */
+app.listen('9999', async () => {
+  try {
+    const secrets = await getSecrets();
+    console.log('secrets:', secrets);
+    initMongo();
+  } catch (error) {
+    console.log(error);
+  };
 });
 
 module.exports = app;

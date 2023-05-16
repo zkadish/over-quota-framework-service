@@ -3,36 +3,28 @@
 /**
  * Module dependencies.
  */
-
 var app = require('../app');
 var debug = require('debug')('app:server');
 var http = require('http');
 
 /**
- * initialize mongodb
- */
-// const mongodb = require('../mongodb/connection.js');
-
-/**
  * Get port from environment and store in Express.
  */
-
 var port = normalizePort(process.env.PORT || '9999');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 //  server.listen(port, '0.0.0.0', () => { // use ip 0.0.0.0 when running inside of docker
 server.listen(port, '127.0.0.1', () => {
-  console.log('app-server is starting...')
+  console.log('app-server is starting...');
+  // getSecrets();
 });
 // server.listen(port, '0.0.0.0');
 server.on('error', onError);
@@ -41,7 +33,6 @@ server.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
@@ -61,7 +52,6 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -89,7 +79,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
